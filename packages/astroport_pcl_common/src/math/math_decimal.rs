@@ -88,8 +88,20 @@ pub(crate) fn df_dx(
 
     let k = a_gamma_pow2 * k0 / gamma_one_k0_pow2;
     let k0_x = x_r * N_POW2;
-    let k_x = k0_x * a_gamma_pow2 * (gamma + Decimal256::one() + k0) * PADDING
-        / (PADDING * d_pow2 * gamma_one_k0 * gamma_one_k0_pow2);
+
+    let temp0 = k0_x * a_gamma_pow2 * (gamma + Decimal256::one() + k0);
+
+    if temp0 > (SignedDecimal256::MAX / PADDING) {
+        panic!("Overflow occurred in multiplication with PADDING * temp0");
+    }
+
+    let temp1 = d_pow2 * gamma_one_k0 * gamma_one_k0_pow2;
+
+    if temp1 > (SignedDecimal256::MAX / PADDING) {
+        panic!("Overflow occurred in multiplication with PADDING * temp1");
+    }
+
+    let k_x = temp0 * PADDING / (temp1 * PADDING);
 
     (k_x * (x[0] + x[1]) + k) * d + x_r - k_x * d_pow2
 }

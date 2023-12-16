@@ -2,7 +2,7 @@ use cosmwasm_std::{Decimal256, StdError};
 use std::fmt::{Display, Formatter};
 use std::ops;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub struct SignedDecimal256 {
     val: Decimal256,
     /// false - positive, true - negative
@@ -38,6 +38,11 @@ impl SignedDecimal256 {
             self.val + other.val
         }
     }
+
+    pub const MAX: Self = Self {
+        val: Decimal256::MAX,
+        neg: false,
+    };
 }
 
 impl From<Decimal256> for SignedDecimal256 {
